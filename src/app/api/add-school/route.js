@@ -24,6 +24,12 @@ export async function POST(request) {
     return NextResponse.json({ message: 'School added successfully!', result }, { status: 201 });
 
   } catch (error) {
+     if (error.message.includes('Duplicate entry')) {
+      return NextResponse.json(
+        { message: 'This email address is already registered. Please use a different one.' },
+        { status: 409 } // 409 Conflict ek standard HTTP status hai is case ke liye
+      );
+    }
     return NextResponse.json({ message: 'An error occurred.', error: error.message }, { status: 500 });
   }
 }
