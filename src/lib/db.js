@@ -1,30 +1,30 @@
 import mysql from 'mysql2/promise';
 
 export async function query({ query, values = [] }) {
-  // Parse the DATABASE_URL to extract components
-  const dbUrl = new URL(process.env.DATABASE_URL);
-
+  // Configuration object that uses the connection string directly
+  // and enforces SSL. This is the most reliable method.
   const dbConfig = {
-    host: dbUrl.hostname,
-    port: dbUrl.port,
-    user: dbUrl.username,
-    password: dbUrl.password,
-    database: dbUrl.pathname.slice(1), // remove the leading '/'
-    // This is the crucial part for secure production connections
+    uri: process.env.DATABASE_URL,
     ssl: {
+      // This is required for secure connections on platforms like Vercel
       rejectUnauthorized: true,
     },
   };
 
-  const connection = await mysql.createConnection(dbConfig);
-
+  let connection;
   try {
+    // Establish the connection using the config object
+    connection = await mysql.createConnection(dbConfig);
     const [results] = await connection.execute(query, values);
-    connection.end();
     return results;
   } catch (error) {
-    // Log the detailed error for debugging
-    console.error("Database Query Error:", error.message);
-    throw Error(error.message);
+    // Log the actual error to Vercel for debugging
+    console.error("DATABASE_ERROR:", error);
+    throw new Error(error.message);
+  } finally {
+    // Make sure to close the connection in any case
+    if (connection) {
+      await connection.end();
+    }
   }
 }
