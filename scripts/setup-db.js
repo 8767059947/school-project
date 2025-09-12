@@ -28,6 +28,20 @@ async function setupDatabase() {
     console.log("Running CREATE TABLE script...");
     await connection.execute(createTableQuery);
     console.log("✅ Table 'schools' is ready.");
+
+     const createOtpsTableQuery = `
+      CREATE TABLE IF NOT EXISTS otps (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(255) NOT NULL,
+        otp VARCHAR(6) NOT NULL,
+        expires_at DATETIME NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+    console.log("Checking/Creating 'otps' table...");
+    await connection.execute(createOtpsTableQuery);
+    console.log("✅ Table 'otps' is ready.");
+
     
   } catch (error) {
     console.error("❌ An error occurred:", error.message);

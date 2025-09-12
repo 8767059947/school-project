@@ -130,13 +130,20 @@ export default function AddSchoolPage() {
 
           <div className="relative">
             <PhotoIcon className="pointer-events-none w-6 h-6 absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400" />
-            <input 
-              id="image"
-              type="text"
-              placeholder="Image URL (e.g., https://example.com/school.jpg)"
-              {...register('image')}
-              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500 text-gray-500"
-            />
+           <input
+  id="image"
+  type="url" // Use type="url" for better browser support
+  placeholder="Image URL (e.g., https://example.com/school.jpg)"
+  {...register('image', {
+    pattern: {
+      value: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i,
+      message: 'Please enter a valid URL.'
+    }
+  })}
+  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+/>
+{/* Yeh line error message dikhane ke liye add karein */}
+{errors.image && <p className="text-red-500 text-xs -mt-3 ml-2">{errors.image.message}</p>}
           </div>
           
           {/* Improved button with gradient and hover effect */}
